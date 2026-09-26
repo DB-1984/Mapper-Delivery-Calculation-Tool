@@ -1,0 +1,11 @@
+[
+  { "underMiles": 50, "price": 50 },
+  { "underMiles": 100, "price": 75 },
+  { "underMiles": 150, "price": 99 },
+  { "underMiles": 200, "price": 125 },
+  { "underMiles": 250, "price": 149 },
+  { "underMiles": 300, "price": 175 },
+  { "underMiles": 350, "price": 199 },
+  { "underMiles": 400, "price": 225 },
+  { "underMiles": 450, "price": 249 }
+]
