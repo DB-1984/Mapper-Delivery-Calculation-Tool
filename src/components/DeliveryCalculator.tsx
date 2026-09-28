@@ -81,7 +81,6 @@ export default function DeliveryCalculator() {
     <path d="M15.75 8.25L13.55 13.55L8.25 15.75L10.45 10.45L15.75 8.25Z" fill="#00e1ae" stroke="#00e1ae" strokeWidth="1.2" strokeLinejoin="round"></path>
     <circle cx="12" cy="12" r="1.15" fill="white"></circle>
   </svg>
-  <span className="hidden mapper-logo sm:inline font-black text-sm tracking-tighter text-zinc-950">Mapper</span>
 </div>
         <section className="absolute bottom-4 left-4 right-4 z-20 mx-auto max-w-md rounded-2xl border border-white/60 bg-white/90 p-5 shadow-2xl backdrop-blur-md">
           {!selectedAddress ? (
