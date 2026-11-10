@@ -14,27 +14,17 @@ import deliveryBands from "@/data/delivery-bands.json";
 import { getDeliveryPrice } from "@/lib/get-delivery-price";
 import type { DeliveryBand } from "@/types/delivery";
 
-type GoogleDistanceResponse = {
-  status?: string;
-  error_message?: string;
-  rows?: Array<{
-    elements?: Array<{
-      status?: string;
-      distance?: {
-        value?: number;
-        text?: string;
-      };
-    }>;
+type GoogleRoutesResponse = {
+  routes?: Array<{
+    distanceMeters?: number;
   }>;
+  error?: {
+    message?: string;
+  };
 };
 
 export async function POST(request: Request) {
   try {
-    /*
-     * Environment variables have the type string | undefined.
-     * These checks ensure that both variables exist and narrow
-     * their types to string for the rest of this function.
-     */
     const originPostcode = process.env.ORIGIN_POSTCODE;
     const apiKey = process.env.GOOGLE_DISTANCE_MATRIX_KEY;
 
@@ -54,10 +44,6 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * request.json() could contain any kind of value, so it is
-     * initially treated as unknown and checked before being used.
-     */
     const body: unknown = await request.json();
 
     if (
@@ -89,30 +75,37 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Build the query sent from this server to Google's
-     * Distance Matrix API. The API key is never sent to the browser.
-     */
-    const searchParams = new URLSearchParams({
-      origins: originPostcode.trim().toUpperCase(),
-      destinations: destination,
-      units: "imperial",
-      key: apiKey,
-    });
-
     const googleResponse = await fetch(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?${searchParams.toString()}`,
+      "https://routes.googleapis.com/directions/v2:computeRoutes",
       {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": apiKey,
+          "X-Goog-FieldMask": "routes.distanceMeters",
+        },
+        body: JSON.stringify({
+          origin: {
+            address: originPostcode.trim().toUpperCase(),
+          },
+          destination: {
+            address: destination,
+          },
+          travelMode: "DRIVE",
+          routingPreference: "TRAFFIC_UNAWARE",
+        }),
         cache: "no-store",
       }
     );
 
+    const googleData = (await googleResponse.json()) as GoogleRoutesResponse;
+
     if (!googleResponse.ok) {
-      console.error("Google HTTP error:", googleResponse.status);
+      console.error("Google HTTP error:", googleResponse.status, googleData.error?.message);
 
       return Response.json(
         {
-          error: "Unable to contact the distance service.",
+          error: googleData.error?.message ?? "Unable to contact the distance service.",
         },
         {
           status: 502,
@@ -120,31 +113,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const googleData =
-      (await googleResponse.json()) as GoogleDistanceResponse;
+    const distanceMeters = googleData.routes?.[0]?.distanceMeters;
 
-    if (googleData.status !== "OK") {
-      console.error("Google API error:", {
-        status: googleData.status,
-        message: googleData.error_message,
-      });
-
-      return Response.json(
-        {
-          error: "The distance service could not process this request.",
-        },
-        {
-          status: 502,
-        }
-      );
-    }
-
-    const distanceElement = googleData.rows?.[0]?.elements?.[0];
-
-    if (
-      distanceElement?.status !== "OK" ||
-      typeof distanceElement.distance?.value !== "number"
-    ) {
+    if (typeof distanceMeters !== "number") {
       return Response.json(
         {
           error: "Please check that the destination postcode is valid.",
@@ -155,13 +126,7 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Google returns the road distance in metres.
-     * Use the precise mileage for pricing and round only the
-     * mileage displayed in the interface.
-     */
-    const distanceMetres = distanceElement.distance.value;
-    const preciseDistanceMiles = distanceMetres / 1609.344;
+    const preciseDistanceMiles = distanceMeters / 1609.344;
     const displayedDistanceMiles = Number(
       preciseDistanceMiles.toFixed(1)
     );
