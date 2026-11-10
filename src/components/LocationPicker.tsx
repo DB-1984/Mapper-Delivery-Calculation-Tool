@@ -59,7 +59,7 @@ export default function LocationPicker({ onSelect }: LocationPickerProps) {
   }
 
   return (
-    <APIProvider apiKey={apiKey}>
+   <APIProvider apiKey={apiKey} libraries={["places"]}>
       <LocationPickerContent onSelect={onSelect} />
     </APIProvider>
   );
