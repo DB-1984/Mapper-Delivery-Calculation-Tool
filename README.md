@@ -1,4 +1,3 @@
-
 # Mapper — Delivery Quote Calculator
 
 **A practical delivery quotation tool built with Next.js, React and TypeScript, integrating Google Maps APIs with configurable distance-based pricing.**
@@ -9,9 +8,7 @@ Staff can search for a UK address or postcode, view the destination on an intera
 
 The project demonstrates external API integration, server-side request handling, TypeScript and the separation of business logic from the user interface.
 
-**[Try the Live App](https://mapper-7evj.onrender.com/)** | **[Source Code](https://github.com/DB-1984/Mapper-Delivery-Calculation-Tool)**
-
-*The live application is hosted on Render and may take a minute to become available after a period of inactivity.*
+**[Try the Live App](https://mapper.davidbrandondev.com/)** | **[Source Code](https://github.com/DB-1984/Mapper-Delivery-Calculation-Tool)**
 
 ---
 
@@ -180,8 +177,8 @@ The project provided an opportunity to combine business requirements with a mode
 
 ## Links
 
-- **Live Application:** https://mapper-7evj.onrender.com/
+- **Live Application:** https://mapper.davidbrandondev.com/
 - **Video Demonstration:** https://www.youtube.com/watch?v=ttgnArUTppU
 - **Source Code:** https://github.com/DB-1984/Mapper-Delivery-Calculation-Tool
-- **Developer Portfolio:** https://david-brandon.onrender.com/
+- **Developer Portfolio:** https://davidbrandondev.com/
 - **GitHub Profile:** https://github.com/DB-1984
